@@ -19,7 +19,6 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -27,10 +26,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.io.IOException;
 import java.util.Optional;
 
-
 @Configuration
 @EnableWebSecurity
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true",allowedHeaders = "*")
 public class SecurityConfiguration {
 
     @Autowired
@@ -61,7 +58,7 @@ public class SecurityConfiguration {
                                     user.setPicture(picture);
                                     userService.saveUser(user);
                                 }
-                                response.sendRedirect("http://localhost:5173");
+                                response.sendRedirect("http://localhost:5173/");
                             }
                         })
                         .failureHandler(authenticationFailureHandler())
@@ -87,8 +84,19 @@ public class SecurityConfiguration {
 
     @Bean
     public LogoutSuccessHandler logoutSuccessHandler() {
-        return new SimpleUrlLogoutSuccessHandler();
+        return new SimpleUrlLogoutSuccessHandler() {
+            @Override
+            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+                request.getSession().invalidate();
+                jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("JSESSIONID", null);
+                cookie.setPath("/");
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
+//                response.sendRedirect("http://localhost:5173/");
+            }
+        };
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -101,5 +109,4 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
 }

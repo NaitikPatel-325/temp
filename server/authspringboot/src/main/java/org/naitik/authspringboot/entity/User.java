@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
-
-
 @Entity
 @Table(name = "user")
 @AllArgsConstructor
@@ -31,7 +29,11 @@ public class User {
     @Column(name = "email", unique = true)
     private String email;
 
-
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "user_groups",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "group_id"))
+//    public Groups groups;
 
     public User(String fullname, String email,String picture,Long id) {
         this.fullname = fullname;
