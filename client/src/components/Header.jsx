@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import axios from 'axios'; // Ensure axios is imported
+import axios from 'axios'; 
 import UserContext from '../context/create';
 import { GoogleIcon } from './GoogleIcon.jsx';
 
@@ -27,12 +27,13 @@ export const Header = () => {
     }
   };
 
-  const handleLogout = async (e) => {
+  const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:8080/logout', {},{ 
+      await axios.get('http://localhost:8080/logout', { 
         withCredentials: true 
       })
       
+      navigate('/');
       setUser(null);
       setIsLoggedIn(false);
       console.log('User logged out:', user);
@@ -99,7 +100,7 @@ export const Header = () => {
             <>
               <li>
                 <a rel="noopener noreferrer" href="/profile" className=" px-4 py-2 text-gray-900 dark:text-gray-100 hover:text-gray-600 flex items-center">
-                  <img src={user?.profileImage} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
+                  <img src={user?.picture} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
                   {user?.fullname}
                 </a>
               </li>
